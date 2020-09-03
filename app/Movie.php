@@ -11,5 +11,5 @@ class Movie extends Model
       'year',
       'description',
       'rating'
-    ]
-}
+    ];
+};
