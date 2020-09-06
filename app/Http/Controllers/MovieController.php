@@ -37,16 +37,22 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
+      $request->validate($this->getValidationRules());
+
       $request_data = $request->all();
 
       $new_movie = new Movie();
-      $new_movie->title = $request_data['title'];
-      $new_movie->year = $request_data['year'];
-      $new_movie->description = $request_data['description'];
-      $new_movie->rating = $request_data['rating'];
+      // $new_movie->title = $request_data['title'];
+      // $new_movie->year = $request_data['year'];
+      // $new_movie->description = $request_data['description'];
+      // $new_movie->rating = $request_data['rating'];
+      $new_movie->fill($request_data);
       $saved = $new_movie->save();
 
-      dd($saved);
+      if($saved){
+        $saved_movie= Movie::orderBy('id', 'desc')->first();
+        return redirect()->route('movie.index', $saved_movie);
+      }
     }
 
     /**
@@ -68,10 +74,10 @@ class MovieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Movie $movie)
     {
         //
-
+        return view('movie.edit', compact('movie'));
     }
 
     /**
@@ -81,9 +87,14 @@ class MovieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Movie $movie )
     {
-        //
+        $request->validate($this->getValidationRules());
+
+        $data = $request->all();
+        $movie->update($data);
+
+        return redirect()->route('movie.show', $movie);
     }
 
     /**
@@ -92,8 +103,20 @@ class MovieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Movie $movie)
     {
-        //
+      $movie->delete();
+
+      return redirect()->route('movie.index');
+    }
+
+    protected function getValidationRules()
+    {
+      return [
+        'title'=>'required|max:255',
+        'year'=>'required|integer|min:1895|max:2020',
+        'description'=>'required',
+        'rating'=>'required|integer|min:1|max:10',
+      ];
     }
 }

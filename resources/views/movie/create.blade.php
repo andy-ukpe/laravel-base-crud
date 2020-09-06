@@ -1,27 +1,50 @@
-<h1>Inserisci un nuovo film</h1>
+
+@extends('layout.app')
+
+
+@section('page_title')
+Add movie
+@endsection
+
+
+@section('main_section')
+
+<h1>Add new Movie</h1>
+
+<div>
+  @if($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+        @foreach ($errors->all() as $error)
+          <li>{{$error}}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
+</div>
 
 <form action="{{route('movie.store')}}" method="post">
   @csrf
-  @method('POST');
+  @method('POST')
 
   <div>
     <label>Title</label>
-    <input type="text" name="title">
+    <input type="text" name="title" value="{{old('title')}}">
   </div>
 
   <div>
     <label>Year</label>
-    <input type="number" name="year">
+    <input type="number" name="year" value="{{old('year')}}">
   </div>
 
   <div>
     <label>Description</label>
-    <textarea name="description" rows="8" cols="80"></textarea>
+    <textarea name="description" rows="8" cols="80">{{old('description')}}</textarea>
   </div>
 
   <div>
-    <label>rating</label>
-    <input type="text" name="rating">
+    <label>Rating</label>
+    <input type="text" name="rating" value="{{old('rating')}}">
   </div>
 
   <div>
@@ -29,3 +52,4 @@
   </div>
 
 </form>
+@endsection
